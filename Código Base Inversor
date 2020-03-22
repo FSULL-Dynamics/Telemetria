@@ -31,7 +31,6 @@ void setup() {
 }
 
 void loop() {
-    print("Alberto no puedo editar ");
     //0xe8 debe estar a 1
     mcp2515.sendMessage(&mensajePruebaEmision);
     mcp2515.readMessage(&mensajePruebaRecepcion);
