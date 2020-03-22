@@ -1,0 +1,63 @@
+#include <SPI.h>
+#include <can.h>
+#include <mcp2515.h>
+
+struct can_frame mensajePruebaEmision;
+struct can_frame mensajePruebaRecepcion;
+MCP2515 mcp2515(10);
+
+void setup() {
+  Serial.begin(9600);
+  SPI.begin();
+
+  mcp2515.reset();
+  mcp2515.setBitrate(CAN_500KBPS, MCP_8MHZ);
+  mcp2515.setNormalMode();
+  Serial.println("----------------CAN READ------------");
+  mensajePruebaEmision.can_id = 0x201;
+  mensajePruebaEmision.can_dlc = 3; //ejemplo de velocidad
+  mensajePruebaEmision.data[0] = 0xD1;
+  mensajePruebaEmision.data[1] = 0xff;
+  mensajePruebaEmision.data[2] = 0x00;
+
+  mensajePruebaRecepcion.can_dlc = 4; //ejemplo de velocidad
+  mensajePruebaRecepcion.data[0] = 0x00;
+  mensajePruebaRecepcion.data[1] = 0x00;
+  mensajePruebaRecepcion.data[2] = 0x00;
+  mensajePruebaRecepcion.data[3] = 0x00;
+
+ 
+  
+}
+
+void loop() {
+
+    //0xe8 debe estar a 1
+    mcp2515.sendMessage(&mensajePruebaEmision);
+    mcp2515.readMessage(&mensajePruebaRecepcion);
+    if(mcp2515.checkReceive() == true){
+     
+      Serial.print("Byte0: ");
+      Serial.print(mensajePruebaRecepcion.data[0], HEX);
+      Serial.println();
+      Serial.print("Byte1: ");
+      Serial.print(mensajePruebaRecepcion.data[1], HEX);   
+      Serial.println();
+      Serial.print("Byte2: ");
+      Serial.print(mensajePruebaRecepcion.data[2], HEX);   
+      Serial.println();
+
+    }
+    else{
+      Serial.println("Error en la recepcion");
+    }
+
+
+    
+
+  
+
+
+
+  
+}
